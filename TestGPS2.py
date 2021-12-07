@@ -45,7 +45,7 @@ while True:
             GPIO.output(12,GPIO.HIGH)
             time.sleep(.1)
             line = gps.readline()
-            print(f"->{line}")
+            ##print(f"->{line}")
             data = line.decode('utf8').split(",")
             ##print(f"->{data}")
             if data[0] == "$GPRMC":
