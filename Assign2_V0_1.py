@@ -8,6 +8,8 @@ import subprocess
 import time
 from datetime import datetime
 
+##print("sudo gpsd -nN /dev/ttyACM0 /var/run/gpsd.sock")
+
 now = datetime.now() # current date and time
 led_Red = LED(21)
 led_Green = LED(12)
@@ -35,7 +37,7 @@ gps = serial.Serial("/dev/ttyACM0", baudrate=9600)
 while True:
     if GPIO.input(18):
         GPIO.output(23,GPIO.HIGH)
-
+        
         ##button.wait_for_press()
         ##pressCount+=1
         ##print(f'pressCount {pressCount}') # print frame number to console
@@ -45,7 +47,7 @@ while True:
             GPIO.output(12,GPIO.HIGH)
             time.sleep(.1)
             line = gps.readline()
-            print(f"->{line}")
+            ##print(f"->{line}")
             data = line.decode('utf8').split(",")
             ##print(f"->{data}")
             if data[0] == "$GPRMC":
@@ -66,12 +68,16 @@ while True:
                     lonmin = longps - londeg*100
                     lon = londeg+(lonmin/60)
 
-                    print(f"lat:{lat:.5f}, lon:{lon:.5f}")
-            
+                    date_time_updating =data[1]
+
+                    print(f"{lat:.5f},{lon:.5f} , {date_time_updating} ")
+                    file1 = open(f'GPS_TrackerData_{date_time}.txt', 'a')
+                    file1.write(f"{lat:.5f} {lon:.5f} {date_time_updating} \n")
                 else:
                     print("No Connection")
         else:
             ##print(f'red on')
+            file1.close
             GPIO.output(12,GPIO.LOW)
             GPIO.output(21,GPIO.HIGH)
             sleep(2)
