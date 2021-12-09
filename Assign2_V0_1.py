@@ -8,6 +8,7 @@ import subprocess
 import time
 from datetime import datetime
 
+
 ##print("sudo gpsd -nN /dev/ttyACM0 /var/run/gpsd.sock")
 
 now = datetime.now() # current date and time
@@ -19,8 +20,8 @@ GPIO.setup(18, GPIO.IN)    # set as input (button)
 GPIO.setup(19, GPIO.IN)    # set as input (button)  
 GPIO.setup(22, GPIO.IN)    # set as input (button) 
 ##button = Button(22)
-date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
-print("date and time:",date_time)	
+date_timeStart = now.strftime("%m_%d_%Y_%H_%M_%S")
+print("date and time:",date_timeStart)	
 
 pressCount = 1
 
@@ -35,6 +36,7 @@ GPIO.add_event_detect(22, GPIO.FALLING, callback=my_callback, bouncetime=300)
 gps = serial.Serial("/dev/ttyACM0", baudrate=9600)
 
 while True:
+    
     if GPIO.input(18):
         GPIO.output(23,GPIO.HIGH)
         
@@ -43,6 +45,8 @@ while True:
         ##print(f'pressCount {pressCount}') # print frame number to console
         sleep(.1)
         if pressCount%2 == 1:
+            
+            date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
             ##print(f'green on')
             GPIO.output(12,GPIO.HIGH)
             time.sleep(.1)
@@ -69,9 +73,10 @@ while True:
                     lon = londeg+(lonmin/60)
 
                     date_time_updating =data[1]
-
+                    
                     print(f"{lat:.5f},{lon:.5f} , {date_time_updating} ")
-                    file1 = open(f'GPS_TrackerData_{date_time}.txt', 'a')
+                    ##print(f"Creating - GPS_TrackerData_{date_time}.txt")
+                    file1 = open(f'ResultsFolder/GPS_TrackerData_{pressCount}_{date_time}.txt', 'a')
                     file1.write(f"{lat:.5f} {lon:.5f} {date_time_updating} \n")
                 else:
                     print("No Connection")
@@ -81,6 +86,8 @@ while True:
             GPIO.output(12,GPIO.LOW)
             GPIO.output(21,GPIO.HIGH)
             sleep(2)
+            process = subprocess.Popen("python3 Distance_calculator.py", shell=True)
+            process.kill
             GPIO.output(21,GPIO.LOW)
             GPIO.wait_for_edge(19, GPIO.FALLING)
             pressCount+=1
