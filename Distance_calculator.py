@@ -1,11 +1,11 @@
 from math import radians, cos, sin, asin, sqrt
 import glob
 import os 
-from datetime import datetime
+from datetime import datetime, date
 
 now = datetime.now() # current date and time
 date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
-
+##dateTimeObj = datetime.strptime(date_time, "%m_%d_%Y_%H_%M_%S").time()
 def haversine(lon1, lat1, lon2, lat2):
     lon1 = radians(lon1)
     lat1 = radians(lat1)
@@ -23,9 +23,13 @@ def column(matrix, i):
     return [row[i] for row in matrix]
 
 def calctime(time):
-    timeRes = time[-1] - time[0]
-    ##print(timeRes)
-    return timeRes
+    date_Fudge = date.today()
+    datetime1 = datetime.combine(date_Fudge, time[0])
+    datetime2 = datetime.combine(date_Fudge, time[-1])
+    time_elapsed = datetime2 - datetime1
+    #timeRes = time[-1] - time[0]
+    print(time_elapsed)
+    return time_elapsed
 
 
 def calcDistanceDelta_Sum(data):
@@ -46,7 +50,9 @@ def calcDistanceDelta_Sum(data):
 
 def avgSpeed(data, timeCalcRes):
     totalDist, intervDist = calcDistanceDelta_Sum(data)
-    avgSpeed = totalDist / timeCalcRes
+    timeCalcRes_secs = timeCalcRes.total_seconds()
+    ##print(timeCalcRes_secs)
+    avgSpeed = totalDist / timeCalcRes_secs
     return avgSpeed
 
 ##https://stackoverflow.com/questions/39327032/how-to-get-the-latest-file-in-a-folder##
@@ -63,19 +69,22 @@ for line in ins:
     ##print(data) # [[1, 3, 4], [5, 5, 6]]
     
 for x in data:
-    timedata.append(x[:][2])
-    ##print(timedata)
+    strngTime = str(x[:][2])
+    dateTimeObj = datetime.strptime(strngTime, '%H%M%S.0').time()
+    timedata.append(dateTimeObj)
+    
+##print(dateTimeObj)
 
-
-##print(timedata)
+#print(timedata)
 timeCalcRes = calctime(timedata)
-print( f'{timeCalcRes:.5f}')
+timeCalcRes_secs = timeCalcRes.total_seconds()
+print('time calc res :' + str(timeCalcRes_secs))
 totalDist, distDelta = calcDistanceDelta_Sum(data)
-print(f'{totalDist:.5f}')
+print('Total Dist : ' + str(totalDist))
 
 avgSpeedRes = avgSpeed(data, timeCalcRes)
-print(f'{avgSpeedRes:.5f}')
+print('AVG Speed :  '+ str(avgSpeedRes))
 
 file2 = open(f'ResultsFolder/GPS_Stats_{date_time}.txt', 'w')
-file2.write(f"{timeCalcRes:.5f} {totalDist:.5f} {avgSpeedRes:.5f} \n")
+file2.write(f"{timeCalcRes_secs:.5f} {totalDist:.5f} {avgSpeedRes:.5f} \n")
 
