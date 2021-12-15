@@ -7,9 +7,24 @@ import os
 import subprocess
 import time
 from datetime import datetime
-
+import paho.mqtt.client as mqtt
+import paho.mqtt.publish as publish
+from urllib.parse import urlparse
+import sys
+import time
+import json
 
 ##print("sudo gpsd -nN /dev/ttyACM0 /var/run/gpsd.sock")
+# parse mqtt url for connection details
+url_str = 'mqtt://broker.emqx.io:8883/grantj2/home'
+print(url_str)
+url = urlparse(url_str)
+base_topic = url.path[1:]
+
+# Connect
+if (url.username):
+   auth1 = {'username':url.username, 'password':url.password}
+
 
 now = datetime.now() # current date and time
 led_Red = LED(21)
@@ -39,7 +54,8 @@ while True:
     
     if GPIO.input(18):
         GPIO.output(23,GPIO.HIGH)
-        
+        data_gps = {}
+        data_gps['gps'] = []
         ##button.wait_for_press()
         ##pressCount+=1
         ##print(f'pressCount {pressCount}') # print frame number to console
@@ -77,7 +93,40 @@ while True:
                     print(f"{lat:.5f},{lon:.5f} , {date_time_updating} ")
                     ##print(f"Creating - GPS_TrackerData_{date_time}.txt")
                     file1 = open(f'ResultsFolder/GPS_TrackerData_{pressCount}_{date_time}.txt', 'a')
-                    file1.write(f"{lat:.5f} {lon:.5f} {date_time_updating} \n")
+                    file1.write(f"Lat: {lat:.5f}, Lon: {lon:.5f}, DateTime: {date_time_updating} \n")
+
+                    #Create JSON strings
+                    #lat_json=json.dumps({"Lattitude":lat}) 
+                    #lon_json=json.dumps({"Longitude":lon}) 
+                    #date_time_json=json.dumps({"DateTime":date_time_updating}) 
+
+                    #OR
+                    data_gps['gps'].append({
+                        'Lat': lat,
+                        'Lon': lon,
+                        'DateTime': date_time_updating
+                    })
+                    ## Real Time ##
+                    ##with open(f'ResultsFolder/GPS_TrackerData_JSON_{pressCount}_{date_time}.txt', 'w') as outfile:
+                    ##    json.dump(data_gps, outfile, indent=2)
+                    ##
+                    
+                    with open(f'ResultsFolder/GPS_TrackerData_JSON_{pressCount}_{date_time}.txt', 'w') as outfile:
+                        json.dump(data_gps, outfile, indent=2)
+                    
+
+                    #Create array of MQTT messages
+                    #lat_msg={'topic': base_topic +"/lat", 'payload':lat_json}
+                    #lon_msg={'topic':base_topic +"/lon", 'payload':lon_json}
+                    #dateTime_msg={'topic':base_topic +"/dateTime", 'payload':date_time_json}
+                   # msgs=[lat_msg,lon_msg, dateTime_msg]
+
+                    #Publish array of messages
+                    #publish.multiple(msgs, hostname=url.hostname, port=url.port)
+                    ##print("published")
+                    ##sleep(0.7)
+                    
+
                 else:
                     print("No Connection")
         else:

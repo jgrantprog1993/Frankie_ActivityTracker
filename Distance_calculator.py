@@ -76,6 +76,7 @@ for x in data:
 ##print(dateTimeObj)
 
 #print(timedata)
+
 timeCalcRes = calctime(timedata)
 timeCalcRes_secs = timeCalcRes.total_seconds()
 print('time calc res :' + str(timeCalcRes_secs))
