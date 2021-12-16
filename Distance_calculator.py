@@ -2,6 +2,11 @@ from math import radians, cos, sin, asin, sqrt
 import glob
 import os 
 from datetime import datetime, date
+import BlynkLib
+
+BLYNK_AUTH = '_1YBrbat_TJksBX_p4ni9jz5gr3q62so'
+# initialize Blynk
+blynk = BlynkLib.Blynk(BLYNK_AUTH)
 
 now = datetime.now() # current date and time
 date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
@@ -88,4 +93,7 @@ print('AVG Speed :  '+ str(avgSpeedRes))
 
 file2 = open(f'ResultsFolder/GPS_Stats_{date_time}.txt', 'w')
 file2.write(f"{timeCalcRes_secs:.5f} {totalDist:.5f} {avgSpeedRes:.5f} \n")
+blynk.virtual_write(1, totalDist)
+blynk.virtual_write(3, timeCalcRes_secs)
+blynk.virtual_write(4, avgSpeedRes)
 

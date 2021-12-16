@@ -14,6 +14,13 @@ import sys
 import time
 import json
 
+import BlynkLib
+
+BLYNK_AUTH = '_1YBrbat_TJksBX_p4ni9jz5gr3q62so'
+# initialize Blynk
+blynk = BlynkLib.Blynk(BLYNK_AUTH)
+
+
 ##print("sudo gpsd -nN /dev/ttyACM0 /var/run/gpsd.sock")
 # parse mqtt url for connection details
 url_str = 'mqtt://broker.emqx.io:8883/grantj2/home'
@@ -45,23 +52,24 @@ def my_callback(channel):
     global pressCount
     pressCount+=1
 
-  
+virtualPinV0 = pressCount%2 
 GPIO.add_event_detect(22, GPIO.FALLING, callback=my_callback, bouncetime=300)  
 
 gps = serial.Serial("/dev/ttyACM0", baudrate=9600)
 
 while True:
-    
+    blynk.run()
+
     if GPIO.input(18):
         GPIO.output(23,GPIO.HIGH)
         data_gps = {}
-        data_gps['gps'] = []
+        data_gps['coordinates'] = []
         ##button.wait_for_press()
         ##pressCount+=1
         ##print(f'pressCount {pressCount}') # print frame number to console
         sleep(.1)
         if pressCount%2 == 1:
-            
+            blynk.virtual_write(0, virtualPinV0 )
             date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
             ##print(f'green on')
             GPIO.output(12,GPIO.HIGH)
@@ -93,7 +101,9 @@ while True:
                     print(f"{lat:.5f},{lon:.5f} , {date_time_updating} ")
                     ##print(f"Creating - GPS_TrackerData_{date_time}.txt")
                     file1 = open(f'ResultsFolder/GPS_TrackerData_{pressCount}_{date_time}.txt', 'a')
-                    file1.write(f"Lat: {lat:.5f}, Lon: {lon:.5f}, DateTime: {date_time_updating} \n")
+                    file1.write(f"{lat:.5f} {lon:.5f} {date_time_updating} \n")
+                    file2 = open(f'DB_Folder/GPS_TrackerData_{pressCount}_{date_time}.txt', 'a')
+                    file2.write(f"Lat: {lat:.5f}, Lon: {lon:.5f}, DateTime: {date_time_updating} \n")
 
                     #Create JSON strings
                     #lat_json=json.dumps({"Lattitude":lat}) 
@@ -101,19 +111,23 @@ while True:
                     #date_time_json=json.dumps({"DateTime":date_time_updating}) 
 
                     #OR
-                    data_gps['gps'].append({
+                    data_gps['coordinates'].append({
                         'Lat': lat,
                         'Lon': lon,
                         'DateTime': date_time_updating
                     })
+                    blynk.virtual_write(5, lat)
+                    blynk.virtual_write(6, lon)
+                    blynk.virtual_write(2, lon, lat)
+                    ##print(data_gps)
+
+
                     ## Real Time ##
                     ##with open(f'ResultsFolder/GPS_TrackerData_JSON_{pressCount}_{date_time}.txt', 'w') as outfile:
                     ##    json.dump(data_gps, outfile, indent=2)
-                    ##
-                    
-                    with open(f'ResultsFolder/GPS_TrackerData_JSON_{pressCount}_{date_time}.txt', 'w') as outfile:
-                        json.dump(data_gps, outfile, indent=2)
-                    
+                    #
+                    #with open(f'ResultsFolder/GPS_TrackerData_JSON_{pressCount}_{date_time}.json', 'r+') as outfile:
+                    #    json.dump(data_gps, outfile, indent=2)
 
                     #Create array of MQTT messages
                     #lat_msg={'topic': base_topic +"/lat", 'payload':lat_json}
@@ -134,10 +148,11 @@ while True:
             file1.close
             GPIO.output(12,GPIO.LOW)
             GPIO.output(21,GPIO.HIGH)
-            sleep(2)
+            sleep(0.5)
             process = subprocess.Popen("python3 Distance_calculator.py", shell=True)
             process.kill
             GPIO.output(21,GPIO.LOW)
             GPIO.wait_for_edge(19, GPIO.FALLING)
+           
             pressCount+=1
             
