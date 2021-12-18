@@ -3,6 +3,12 @@ import glob
 import os 
 from datetime import datetime, date
 import BlynkLib
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from picamera import PiCamera
+import smtplib
+import imghdr
 
 BLYNK_AUTH = '_1YBrbat_TJksBX_p4ni9jz5gr3q62so'
 # initialize Blynk
@@ -60,6 +66,43 @@ def avgSpeed(data, timeCalcRes):
     avgSpeed = totalDist / timeCalcRes_secs
     return avgSpeed
 
+
+def send_mail(eFrom, to, subject, text, attachment):
+    # SMTP Server details: update to your credentials or use class server
+    smtpServer='smtp.mailgun.org'
+    smtpUser='postmaster@sandbox9509da4e5c8e4d7aa78a7a26fede82fe.mailgun.org'
+    smtpPassword='dd767353e64489ffb003fecbe067fc29-7dcc6512-9f23534f'
+    port=587
+
+    # open attachment and read in as MIME image
+    attachmentTest = imghdr.what(attachment)
+    if attachmentTest == 'jpeg':
+        fp = open(attachment, 'rb')
+        msgImage = MIMEImage(fp.read())
+        fp.close()
+    else:
+        fp = open(attachment, 'rb')
+        msgImage = MIMEMultipart(fp.read())
+        fp.close()
+
+    #construct MIME Multipart email message
+    msg = MIMEMultipart()
+    msg.attach(MIMEText(text))
+    if attachmentTest == 'jpeg':
+        msgImage['Content-Disposition'] = 'attachment; filename="image.jpg"'
+    else:
+        msgImage['Content-Disposition'] = 'attachment; filename="Summary.txt"'
+        
+    msg.attach(msgImage)
+    msg['Subject'] = subject
+
+    # Authenticate with SMTP server and send
+    s = smtplib.SMTP(smtpServer, port)
+    s.login(smtpUser, smtpPassword)
+    s.sendmail(eFrom, to, msg.as_string())
+    s.sendmail()
+    s.quit()
+
 ##https://stackoverflow.com/questions/39327032/how-to-get-the-latest-file-in-a-folder##
 list_of_files = glob.glob('/home/pi/Assignment_2/ResultsFolder/*.txt') # * means all if need specific format then *.csv 
 latest_file = max(list_of_files, key=os.path.getctime)
@@ -96,4 +139,8 @@ file2.write(f"{timeCalcRes_secs:.5f} {totalDist:.5f} {avgSpeedRes:.5f} \n")
 blynk.virtual_write(1, totalDist)
 blynk.virtual_write(3, timeCalcRes_secs)
 blynk.virtual_write(4, avgSpeedRes)
-
+print("I GOT HERE")
+send_mail('myPi@myhouse.ie', '12430732@mail.wit.ie', f'Last Activity_{date_time}_photos', 'Just Completed an Activity ! Picture From it :) See attached', f'/home/pi/Assignment_2/DB_Folder/Photo_frame_1.jpg')
+print("MAde it HERE")
+send_mail('myPi@myhouse.ie', '12430732@mail.wit.ie', f'Last Activity_{date_time}_Stats', 'Just Completed an Activity ! See Summary attached', f'/home/pi/Assignment_2/ResultsFolder/GPS_Stats_{date_time}.txt')
+print("At the End")
