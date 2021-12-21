@@ -1,14 +1,17 @@
+#################
+# Name: Jason Grant
+# ID: 12430732
+# Description: IOT Assignment 2: Calculates the Summary Items (Distance, Time, Avg Speed)
+#################
+
 from math import radians, cos, sin, asin, sqrt
 import glob
 import os 
 from datetime import datetime, date
 import BlynkLib
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from picamera import PiCamera
-import smtplib
-import imghdr
+import os.path
+import subprocess
+
 
 BLYNK_AUTH = '_1YBrbat_TJksBX_p4ni9jz5gr3q62so'
 # initialize Blynk
@@ -17,6 +20,8 @@ blynk = BlynkLib.Blynk(BLYNK_AUTH)
 now = datetime.now() # current date and time
 date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
 ##dateTimeObj = datetime.strptime(date_time, "%m_%d_%Y_%H_%M_%S").time()
+
+##Calculate the distance (in various units) between two points on Earth using their latitude and longitude.
 def haversine(lon1, lat1, lon2, lat2):
     lon1 = radians(lon1)
     lat1 = radians(lat1)
@@ -66,42 +71,13 @@ def avgSpeed(data, timeCalcRes):
     avgSpeed = totalDist / timeCalcRes_secs
     return avgSpeed
 
-
-def send_mail(eFrom, to, subject, text, attachment):
-    # SMTP Server details: update to your credentials or use class server
-    smtpServer='smtp.mailgun.org'
-    smtpUser='postmaster@sandbox9509da4e5c8e4d7aa78a7a26fede82fe.mailgun.org'
-    smtpPassword='dd767353e64489ffb003fecbe067fc29-7dcc6512-9f23534f'
-    port=587
-
-    # open attachment and read in as MIME image
-    attachmentTest = imghdr.what(attachment)
-    if attachmentTest == 'jpeg':
-        fp = open(attachment, 'rb')
-        msgImage = MIMEImage(fp.read())
-        fp.close()
-    else:
-        fp = open(attachment, 'rb')
-        msgImage = MIMEMultipart(fp.read())
-        fp.close()
-
-    #construct MIME Multipart email message
-    msg = MIMEMultipart()
-    msg.attach(MIMEText(text))
-    if attachmentTest == 'jpeg':
-        msgImage['Content-Disposition'] = 'attachment; filename="image.jpg"'
-    else:
-        msgImage['Content-Disposition'] = 'attachment; filename="Summary.txt"'
-        
-    msg.attach(msgImage)
-    msg['Subject'] = subject
-
-    # Authenticate with SMTP server and send
-    s = smtplib.SMTP(smtpServer, port)
-    s.login(smtpUser, smtpPassword)
-    s.sendmail(eFrom, to, msg.as_string())
-    s.sendmail()
-    s.quit()
+def summaryToHTML(time, dist, avgSpeed, date_time ):
+    index= open("index.html", 'r').read().format(htmlTime = time,htmldist=dist, htmlAvgSpeed=avgSpeed, htmlDate_Time=date_time)
+    print(index)
+    
+    datareplace = open("index.html", 'wt')
+    datareplace.write(index)
+    datareplace.close
 
 ##https://stackoverflow.com/questions/39327032/how-to-get-the-latest-file-in-a-folder##
 list_of_files = glob.glob('/home/pi/Assignment_2/ResultsFolder/*.txt') # * means all if need specific format then *.csv 
@@ -111,19 +87,16 @@ ins = open(latest_file, 'r')
 data = []
 timedata = []
 for line in ins:
-    number_strings = line.split() # Split the line on runs of whitespace
-    numbers = [float(n) for n in number_strings] # Convert to floats
-    data.append(numbers) # Add the "row" to your list.
+    number_strings = line.split()                                   # Split the line on runs of whitespace
+    numbers = [float(n) for n in number_strings]                    # Convert to floats
+    data.append(numbers)                                            # Add the "row" to your list.
     ##print(data) # [[1, 3, 4], [5, 5, 6]]
-    
+ins.close   
 for x in data:
     strngTime = str(x[:][2])
     dateTimeObj = datetime.strptime(strngTime, '%H%M%S.0').time()
     timedata.append(dateTimeObj)
     
-##print(dateTimeObj)
-
-#print(timedata)
 
 timeCalcRes = calctime(timedata)
 timeCalcRes_secs = timeCalcRes.total_seconds()
@@ -134,13 +107,13 @@ print('Total Dist : ' + str(totalDist))
 avgSpeedRes = avgSpeed(data, timeCalcRes)
 print('AVG Speed :  '+ str(avgSpeedRes))
 
-file2 = open(f'ResultsFolder/GPS_Stats_{date_time}.txt', 'w')
-file2.write(f"{timeCalcRes_secs:.5f} {totalDist:.5f} {avgSpeedRes:.5f} \n")
+file2 = open(f'ResultsFolder/GPS_Stats_1.txt', 'w')
+file2.write(f"Time: {timeCalcRes_secs:.5f} Total Distance: {totalDist:.5f} Average Speed:{avgSpeedRes:.5f} \n")
+file2.close
+file2.seek(0)
 blynk.virtual_write(1, totalDist)
 blynk.virtual_write(3, timeCalcRes_secs)
 blynk.virtual_write(4, avgSpeedRes)
-print("I GOT HERE")
-send_mail('myPi@myhouse.ie', '12430732@mail.wit.ie', f'Last Activity_{date_time}_photos', 'Just Completed an Activity ! Picture From it :) See attached', f'/home/pi/Assignment_2/DB_Folder/Photo_frame_1.jpg')
-print("MAde it HERE")
-send_mail('myPi@myhouse.ie', '12430732@mail.wit.ie', f'Last Activity_{date_time}_Stats', 'Just Completed an Activity ! See Summary attached', f'/home/pi/Assignment_2/ResultsFolder/GPS_Stats_{date_time}.txt')
-print("At the End")
+summaryToHTML(timeCalcRes_secs, totalDist, avgSpeedRes, date_time)
+process = subprocess.run(f"python3 fileopenandRead_test.py {date_time}", shell = True)
+

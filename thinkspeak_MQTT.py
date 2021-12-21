@@ -1,4 +1,10 @@
 #!/usr/bin/python3
+#################
+# Name: Jason Grant
+# ID: 12430732
+# Description: IOT Assignment 2: MQTT publishes to ThinkSpeak
+#################
+
 import paho.mqtt.client as mqtt
 from urllib.parse import urlparse
 import sys

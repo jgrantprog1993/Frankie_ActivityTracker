@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_ad39ced5e83d4471b9a352189cc340a2 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_ad39ced5e83d4471b9a352189cc340a2" ></div>
+        
+</body>
+<script>    
+    
+            var map_ad39ced5e83d4471b9a352189cc340a2 = L.map(
+                "map_ad39ced5e83d4471b9a352189cc340a2",
+                {
+                    center: [52.162787684017104, -7.001080513000488],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 15,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_e932c9db888a4f1b9dddd49190d22e6d = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_ad39ced5e83d4471b9a352189cc340a2);
+        
+    
+
+        function geo_json_bfc22229966f44c3bb9ec253c60cf668_onEachFeature(feature, layer) {
+            layer.on({
+            });
+        };
+        var geo_json_bfc22229966f44c3bb9ec253c60cf668 = L.geoJson(null, {
+                onEachFeature: geo_json_bfc22229966f44c3bb9ec253c60cf668_onEachFeature,
+            
+        });
+
+        function geo_json_bfc22229966f44c3bb9ec253c60cf668_add (data) {
+            geo_json_bfc22229966f44c3bb9ec253c60cf668
+                .addData(data)
+                .addTo(map_ad39ced5e83d4471b9a352189cc340a2);
+        }
+            geo_json_bfc22229966f44c3bb9ec253c60cf668_add({"features": [{"geometry": {"coordinates": [52.16151, -7.001816], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.16151, -7.001817], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161509, -7.001818], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161509, -7.001819], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161509, -7.00182], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161508, -7.00182], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161508, -7.001821], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161507, -7.001822], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161506, -7.001823], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161506, -7.001824], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161505, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161504, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.1615, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.1615, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.1615, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.1615, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161499, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161499, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161498, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161498, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161498, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161498, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161498, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001827], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161496, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161496, -7.001826], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161497, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161497, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161497, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161497, -7.001825], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161497, -7.001824], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001814], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001813], "type": "Point"}, "properties": {}, "type": "Feature"}, {"geometry": {"coordinates": [52.161495, -7.001813], "type": "Point"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+</script>
