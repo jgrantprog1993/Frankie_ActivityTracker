@@ -22,7 +22,6 @@
 ## Result
 
 ![image](https://user-images.githubusercontent.com/76453989/147073157-02ff3109-6f05-4662-b1d5-bb8661efb3ba.png)
-![image](https://user-images.githubusercontent.com/76453989/147074568-db6698f2-a494-4675-8780-b6f3093170f3.png)
 
 
 
